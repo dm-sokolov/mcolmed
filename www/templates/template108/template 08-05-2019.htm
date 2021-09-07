@@ -1,0 +1,248 @@
+<?php
+	if(strpos($_SERVER['REQUEST_URI'], '/index.php') !== FALSE)
+	{
+		header("Location: /", TRUE, 301);
+		exit();
+	}
+?>
+<!DOCTYPE HTML>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title><?php Core_Page::instance()->showTitle()?></title>
+	<meta name="description" content="<?php Core_Page::instance()->showDescription()?>" />
+	<meta name="keywords" content="<?php Core_Page::instance()->showKeywords()?>" />
+	<meta content="text/html; charset=<?php echo SITE_CODING?>" http-equiv="Content-Type" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<?php
+	Core_Page::instance()
+		->prependCss('/css/fonts.css')
+		->prependCss('/css/font-awesome.min.css')
+		->prependCss('/css/jquery.fancybox.css')
+		->prependCss('/css/owl.theme.default.css')
+		->prependCss('/css/owl.carousel.css')
+		->prependCss('/css/bootstrap.css')
+		->showCss();
+	?>
+
+	<?php Core_Browser::check()?>
+
+	<link rel="shortcut icon" href="/favicon.ico" />
+	<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/news/rss/" />
+
+	<?php
+	Core_Page::instance()
+		->prependJs('/hostcmsfiles/main.js')
+		->prependJs('/js/jquery.fancybox.js')
+		->prependJs('/js/owl.carousel.js')
+		->prependJs('/js/jquery.maskedinput.min.js')
+		->prependJs('/hostcmsfiles/jquery/jquery.validate.js')
+		->prependJs('/js/bootstrap.js')
+		->prependJs('/js/popper.min.js')
+		->prependJs('/js/jquery-3.2.1.min.js')
+		->showJs();
+	?>
+<?php include('js/ghead.js'); ?>
+</head>
+<body><?php include('js/gbody.js'); ?>
+<?php
+	$oSwitcher = new Kad_Admin_Switcher();
+	$oSwitcher->execute();
+?>
+	<header>
+		<div class="container">
+			<div class="row header">
+				<div class="col-md-6 col-lg-3">
+					<div class="logo-box mt-1 text-center">
+						<a href="/" title="Олмед - медицинский центр">
+							<img src="/i/logo.png" alt="Олмед — медицинский центр" class="img-fluid" />
+						</a>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3">
+					<div class="city-box px-2">
+						<div class="mb-1 text-center text-sm-left">Ваш город: </div>
+						<?php
+							Core::factory('Core_Html_Entity_Select')
+								->options(Core_Page::instance()->config['cities'])
+								->class('form-control')
+								->value(Core::$url['host'])
+								->onchange("window.location.href='http://' + this.options[this.selectedIndex].value")
+								->execute();
+						?>
+						<div class="text-center text-lg-left">
+							<a href="/contacts/#av" class="px-1 px-sm-0"><?php echo Core_Page::instance()->config['address'] ?></a>
+							<br class="d-none d-sm-inline" />
+							<a class="callibri_p" href="/contacts/#ug" class="px-1 px-sm-0"><?php echo Core_Page::instance()->config['address2'] ?></a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3">
+					<div class="phone-box text-center text-lg-left">
+						<div>Записывайтесь по телефону:</div>
+						<div class="h4">
+							<a href="tel:<?php echo str_replace(array(' ', '(', ')', '-'), '', Core_Page::instance()->config['phone']) ?>" rel="nofollow" class="callibri_phone"><?php echo Core_Page::instance()->config['phone'] ?></a><br />
+							<a class="callibri_p" href="tel:<?php echo str_replace(array(' ', '(', ')'), '', Core_Page::instance()->config['phone2']) ?>" rel="nofollow"><?php echo Core_Page::instance()->config['phone2'] ?></a>
+						</div>
+<div>Звонок бесплатный по РФ</div>
+						<div>
+							<button class="btn" onclick="$.showXslTemplate('/callback/', <?php echo Core_Page::instance()->config['formId'] ?>, 298); return false;">Заказать звонок</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3">
+					<div class="mode-box text-center text-lg-left">
+						<div>Часы работы:</div>
+						<div class="h4"><?php echo Core_Page::instance()->config['mode'] ?></div>
+						<div>
+							<button class="btn" onclick="$.showXslTemplate('/callback/', <?php echo Core_Page::instance()->config['formId2'] ?>, 298); return false;">Записаться на прием</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container mb-3">
+			<?php
+				// Верхнее меню
+				$Structure_Controller_Show = new Structure_Controller_Show(
+					Core_Entity::factory('Site', CURRENT_SITE));
+
+				$Structure_Controller_Show
+					->xsl(Core_Entity::factory('Xsl')->getByName('ВерхнееМенюNEW'))
+					->menu(Core_Page::instance()->config['menuId'])
+					->level(1)
+					->show();
+			?>
+		</div>
+	</header>
+	<?php
+		Core_Page::instance()->execute();
+	?>
+	<footer>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="logo-box mb-1 text-center text-sm-left">
+						<a href="/" title="Олмед - медицинский центр">
+							<img src="/i/logo.png" alt="Олмед — медицинский центр" class="img-fluid" />
+						</a>
+					</div>
+					<div class="social-box text-center mb-1">
+						<?php
+							// Social button
+							$Structure_Controller_Show = new Structure_Controller_Show(
+								Core_Entity::factory('Site', CURRENT_SITE));
+
+							$Structure_Controller_Show
+								->xsl(Core_Entity::factory('Xsl')->getByName('SocialButtonNEW'))
+								->menu(Core_Page::instance()->config['menuId2'])
+								->showProperties(TRUE)
+								->show();
+						?>
+					</div>
+					<div class="text-center text-sm-left">Медицинский центр «ОЛМЕД», лечение варикозной болезни современными методами &copy; <?php echo date('Y');?></div>
+				</div>
+				<div class="col-sm-6">
+					<div class="row justify-content-md-center">
+						<div class="col-sm-5 text-center text-sm-left">
+							<?php
+								// Популярные услуги футер
+								$Informationsystem_Controller_Show = new Informationsystem_Controller_Show(
+									Core_Entity::factory('Informationsystem', Core_Page::instance()->config['informationsystemId2'])
+								);
+
+								$Informationsystem_Controller_Show
+									->xsl(
+										Core_Entity::factory('Xsl')->getByName('ПопулярныеУслугиФутерNEW')
+									)
+									->groupsForbiddenTags(array('description','seo_title','seo_description','seo_keywords')) 
+									->group(0)
+									->groupsProperties(FALSE)
+									->limit(0)
+									->calculateTotal(FALSE);
+
+								$Informationsystem_Controller_Show
+									->informationsystemGroups()
+										->queryBuilder()
+										->limit(7);
+
+								$Informationsystem_Controller_Show->show();
+							?>
+						</div>
+						<div class="col-sm-5 text-center text-sm-left">
+							<?php
+								// Полезная информация футер
+								$Structure_Controller_Show = new Structure_Controller_Show(
+									Core_Entity::factory('Site', CURRENT_SITE));
+
+								$Structure_Controller_Show
+									->xsl(Core_Entity::factory('Xsl')->getByName('ПолезнаяИнформацияФутерNEW'));
+
+								$Structure_Controller_Show
+									->structure()
+										->queryBuilder()
+										->limit(7);
+
+								$Structure_Controller_Show->show();
+							?>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="address-box text-center text-sm-left">
+						<strong>Сеть МЦ "Олмед"</strong><br /><br />
+						<strong>Адреса:</strong><br />
+						г. <?php echo Core_Page::instance()->config['cities'][Core::$url['host']] ?>, <?php echo Core_Page::instance()->config['address'] ?><br />
+						<?php if(Core_Page::instance()->config['address2']) { ?>
+						г. <?php echo Core_Page::instance()->config['cities'][Core::$url['host']] ?>, <?php echo Core_Page::instance()->config['address2'] ?><br />
+						<?php } ?>
+						<strong>Телефон:</strong> <a href="tel:<?php echo str_replace(array(' ', '(', ')', '-'), '', Core_Page::instance()->config['phone']) ?>" rel="nofollow" class="callibri_phone"><?php echo Core_Page::instance()->config['phone'] ?></a><br /><br />
+						<strong>Режим работы:</strong><br />
+						<?php echo str_replace('<br />', ', ', Core_Page::instance()->config['mode']) ?>
+					</div>
+				</div>
+			</div>
+			<div class="text-center">
+<div>Копирование, тиражирование, а равно иное использование материалов, размещенных на сайте www.sevural.mcolmed.ru возможно только с письменного разрешения Правообладателя.</div>
+				<small><a href="http://www.morozovpimnev.ru" target="_blank" class="text-muted">Поддержка сайта art studio Morozov&amp;Pimnev</a></small>
+			</div>
+		</div>
+	</footer>
+<script type="text/javascript" charset="utf-8" async="async" src="//www.clicktex.ru/code/12426"></script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript" >
+    (function (d, w, c) {
+        (w[c] = w[c] || []).push(function() {
+            try {
+                w.yaCounter20420221 = new Ya.Metrika2({
+                    id:20420221,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true,
+                    webvisor:true
+                });
+                  w.yaCounter50600044 = new Ya.Metrika2({
+                    id:50600044,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true,                    
+                });
+            } catch(e) { }
+        });
+
+        var n = d.getElementsByTagName("script")[0],
+            s = d.createElement("script"),
+            f = function () { n.parentNode.insertBefore(s, n); };
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://mc.yandex.ru/metrika/tag.js";
+
+        if (w.opera == "[object Opera]") {
+            d.addEventListener("DOMContentLoaded", f, false);
+        } else { f(); }
+    })(document, window, "yandex_metrika_callbacks2");
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/20420221" style="position:absolute; left:-9999px;" alt="" /><img src="https://mc.yandex.ru/watch/50600044" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+</body>
+</html>

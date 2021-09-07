@@ -1,0 +1,30 @@
+Options +FollowSymLinks
+AddDefaultCharset Off
+
+<IfModule mod_php4.c>
+	php_flag magic_quotes_gpc off
+	php_flag magic_quotes_runtime off
+	php_flag register_globals off
+</IfModule>
+
+<IfModule mod_php5.c>
+	php_flag magic_quotes_gpc off
+	php_flag magic_quotes_runtime off
+	php_flag register_globals off
+</IfModule>
+
+<IfModule mod_dir.c>
+	DirectoryIndex index.php index.htm index.html
+</IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+	
+	RewriteCond %{HTTP_HOST} ^mcolmed\.ru$ [NC]
+	RewriteRule ^(.*)$ http://www.mcolmed.ru/$1 [R=301,L]
+
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^(.*)$ /index.php
+</IfModule>

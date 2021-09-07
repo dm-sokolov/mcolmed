@@ -1,0 +1,95 @@
+<div class="container mb-4">
+	<div class="row">	
+		<div class="col col-xl-9">
+			<div class="breadcrumbs">
+				<?php
+					// Вывод строки навигации
+					$Structure_Controller_Breadcrumbs = new Structure_Controller_Breadcrumbs(
+						Core_Entity::factory('Site', CURRENT_SITE)
+					);
+
+					$Structure_Controller_Breadcrumbs
+						->xsl(
+							Core_Entity::factory('Xsl')->getByName('ХлебныеКрошкиNEW')
+						)
+						->show();
+				?>
+			</div>
+			<?php
+			$object = Core_Page::instance()->object;
+			$informationsystem = TRUE;
+			if(is_object($object) && get_class($object) == 'Informationsystem_Controller_Show') {				
+			$oInfoSys = Core_Page::instance()->object->getEntity(); 
+			$infoSysId = $oInfoSys->id;	
+		  if ($object->group && $infoSysId != 62) 
+			{
+				$groupId = $object->group;
+
+				$oInformationsystem_Group = Core_Entity::factory('Informationsystem_Group', $groupId);
+				$oProperty = Core_Entity::factory('Property', Core_Page::instance()->config['propertyId']);
+
+				$aPropertyValues = $oProperty->getValues($oInformationsystem_Group->id);
+                                if(!($object->item && $object->group == 52))
+                                {
+				if(isset($aPropertyValues[0]) && $aPropertyValues[0]->file)
+				{
+					$src = $oInformationsystem_Group->getGroupHref() . $aPropertyValues[0]->file;
+
+					echo '<div id="mainSlider" class="owl-carousel owl-theme main-slider">';
+					echo '<div class="item"><img src="'. $src .'" /></div>';
+					echo '</div>';
+
+					$informationsystem = FALSE;
+				}
+			    }
+			}
+                        }
+                       // В элементах группы "Акции" не выводим слайдер
+             /*if (is_object($object) && get_class($object) == 'Informationsystem_Controller_Show' && $object->item && $object->group == 52) {
+                          $informationsystem = FALSE;
+                        }*/
+
+			// Акции на главной
+			/*if(is_object($object) && $informationsystem && !($object->group && $object->group == 52) && !($object->group && $object->group == 733 ) )
+			{
+				$Informationsystem_Controller_Show = new Informationsystem_Controller_Show(
+					Core_Entity::factory('Informationsystem', Core_Page::instance()->config['informationsystemId3'])
+				);
+                                  
+				$Informationsystem_Controller_Show
+					->xsl(
+						Core_Entity::factory('Xsl')->getByName('АкцииНаГлавнойNEW')
+					)
+					->groupsMode('none')
+					//->itemsForbiddenTags(array('text'))
+					->group(FALSE)
+					->limit(10)
+					->itemsProperties(TRUE)
+					->calculateTotal(FALSE)
+					->show();
+			}*/
+			?>
+			<?php
+				Core_Page::instance()->execute();
+			?>
+		</div>
+		<div class="olmed_sidebar col-xl-3 d-none d-xl-block">
+			<?php
+				// Услуги справа
+				$Informationsystem_Controller_Show_Observer = new Informationsystem_Controller_Show_Observer(
+					Core_Entity::factory('Informationsystem', Core_Page::instance()->config['informationsystemId2'])
+				);
+
+				$Informationsystem_Controller_Show_Observer
+					->xsl(
+						Core_Entity::factory('Xsl')->getByName('УслугиСправаNEW')
+					)
+					->groupsMode('tree')
+					->groupsForbiddenTags(array('description','seo_title','seo_description','seo_keywords')) 
+					->group(0)
+					->groupsProperties(array('98'))
+					->show();
+                       ?>
+		</div>
+	</div>
+</div>

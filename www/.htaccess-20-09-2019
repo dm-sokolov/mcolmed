@@ -1,0 +1,129 @@
+Options +FollowSymLinks
+AddDefaultCharset Off
+
+<Files .htaccess>
+	Order Allow,Deny
+	Deny from all
+</Files>
+
+<IfModule mod_php4.c>
+	php_flag magic_quotes_gpc off
+	php_flag magic_quotes_runtime off
+	php_flag register_globals off
+</IfModule>
+
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresDefault "access plus 1 days"
+ExpiresByType image/x-icon "access plus 1 week"
+ExpiresByType image/gif "access plus 1 week"
+ExpiresByType image/jpeg "access plus 1 week"
+ExpiresByType image/png "access plus 1 week"
+ExpiresByType text/css "access plus 1 week"
+ExpiresByType text/javascript "access plus 1 week"
+ExpiresByType application/javascript "access plus 1 week"
+ExpiresByType application/x-javascript "access plus 1 week"
+ExpiresByType application/x-font-woff "access plus 1 month"
+</IfModule>
+
+# Apache 2.2
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/css text/javascript application/javascript application/x-javascript
+<IfModule mod_setenvif.c>
+BrowserMatch ^Mozilla/4 gzip-only-text/html
+BrowserMatch ^Mozilla/4\.0[678] no-gzip
+BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</IfModule>
+</IfModule>
+
+# Apache 1.3, 2.0
+<ifModule mod_gzip.c>
+mod_gzip_on Yes
+mod_gzip_dechunk Yes
+mod_gzip_item_include file .(css|js)$
+mod_gzip_item_include mime ^application/javascript$
+mod_gzip_item_include mime ^application/x-javascript$
+mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
+</ifModule>
+
+<IfModule mod_php5.c>
+	php_flag magic_quotes_gpc off
+	php_flag magic_quotes_runtime off
+	php_flag register_globals off
+</IfModule>
+
+<IfModule mod_dir.c>
+	DirectoryIndex index.php index.htm index.html
+</IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+
+	# Filter TRACE, TRACK and DEBUG request methods
+	RewriteCond %{REQUEST_METHOD} ^(DEBUG|TRACE|TRACK) [NC]
+	RewriteRule ^(.*)$ - [F,L]
+
+	RewriteCond %{SERVER_NAME} ^mcolmed\.ru$ [NC]
+	RewriteRule ^(.*)$ http://www.mcolmed.ru/$1 [R=301,L]
+	
+	RewriteCond %{THE_REQUEST} ^.*/index\.php [NC]
+	RewriteRule ^(.*)index.php$ http://www.mcolmed.ru/$1 [R=301,L]
+
+	RewriteCond %{THE_REQUEST} ^.*/index\.html [NC]
+	RewriteRule ^(.*)index.html$ http://www.mcolmed.ru/$1 [R=301,L]
+
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^(.*)$ /index.php	
+	
+	Redirect 301 /patients/how-to-choose-a-clinic/ http://www.mcolmed.ru/patients/articles/how-to-choose-a-clinic/
+	Redirect 301 /patients/how-to-choose-a-doctor/ http://www.mcolmed.ru/patients/articles/how-to-choose-a-doctor/
+	Redirect 301 /services/therapy/ http://www.mcolmed.ru/services/terapevt/
+#22.08.18
+	Redirect 301 /services/gynecology/vedenie-beremennosti/ http://www.mcolmed.ru/services/gynecology/
+	Redirect 301 /services/cosmetology/bezygolnaya-mezoterapiya/ http://www.mcolmed.ru/services/cosmetology/
+	Redirect 301 /services/cosmetology/nitevoy-lifting/ http://www.mcolmed.ru/services/cosmetology/
+	Redirect 301 /services/cosmetology/1344/ http://www.mcolmed.ru/services/cosmetology/
+	Redirect 301 /services/cosmetology/metareplace/ http://www.mcolmed.ru/services/cosmetology/
+	Redirect 301 /services/cosmetology/procedures-green-peel/ http://www.mcolmed.ru/services/cosmetology/
+	Redirect 301 /services/surgery/laser-removal-of-tumors/ http://www.mcolmed.ru/services/cosmetology/
+	Redirect 301 /services/functional/eho-kg/ http://www.mcolmed.ru/services/ultrasonography/serdca/
+#30.08.18
+	Redirect 301 /services/surgery/laser-removal-of-tumors/ /
+	Redirect 301 /services/hirurg/laser-removal-of-tumors/ /
+	Redirect 301 /specialists/1485/ /
+	Redirect 301 /specialists/1053/ /
+	Redirect 301 /specialists/491/ /
+	Redirect 301 /specialists/284/1880/ /
+#10.09.18
+	Redirect 301 /specialists/263/220/ /
+	Redirect 301 /specialists/220/ /
+#14.09.18
+	REDIRECT 301 /services/ultrasonography/mochevogo-puzyrya/ http://www.mcolmed.ru/services/ultrasonography/uzi-mochevogo-puzyrya/
+	REDIRECT 301 /services/ultrasonography/mochevogo-puzyrya/ http://www.mcolmed.ru/services/ultrasonography/uzi-mochevogo-puzyrya/
+	REDIRECT 301 /services/ultrasonography/molochnyh-zhelez/ http://www.mcolmed.ru/services/ultrasonography/uzi-molochnyh-zhelez/
+	REDIRECT 301 /services/ultrasonography/organov-bryushnoj-polosti/ http://www.mcolmed.ru/services/ultrasonography/uzi-organov-bryushnoj-polosti/
+	REDIRECT 301 /services/ultrasonography/organov-malogo-taza/ http://www.mcolmed.ru/services/ultrasonography/uzi-organov-malogo-taza/
+	REDIRECT 301 /services/ultrasonography/pochek/ http://www.mcolmed.ru/services/ultrasonography/uzi-pochek/
+	REDIRECT 301 /services/ultrasonography/shchitovidnoj-zhelezy/ http://www.mcolmed.ru/services/ultrasonography/uzi-shchitovidnoj-zhelezy/
+#18.09.18
+	Redirect 301 /services/182/1382/ http://www.mcolmed.ru/
+	Redirect 301 /services/stock/175/ http://www.mcolmed.ru/
+	Redirect 301 /schedule-of-doctors/ http://www.mcolmed.ru/
+	Redirect 301 /specialists/1249/ http://www.mcolmed.ru/
+	Redirect 301 /services/stock/174/ http://www.mcolmed.ru/
+	Redirect 301 /news/1363/ http://www.mcolmed.ru/
+
+#04.19	
+Redirect 301 /services/medical-massage/price/ /
+Redirect 301 /specialists/250/1802/ /
+Redirect 301 /services/stock/385/ /
+Redirect 301 /patients/articles/how-to-prepare-for-ultrasound/ /
+Redirect 301 /patients/otzivy/2249/ /
+Redirect 301 /services/stock/377/ /
+Redirect 301 /services/stock/374/ /
+Redirect 301 /specialists/263/1508/ /
+Redirect 301 /specialists/250/419/ /
+
+</IfModule>

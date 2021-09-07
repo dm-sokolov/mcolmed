@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xsl:stylesheet>
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:hostcms="http://www.hostcms.ru/"
+	exclude-result-prefixes="hostcms">
+	<xsl:output xmlns="http://www.w3.org/TR/xhtml1/strict" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" encoding="utf-8" indent="yes" method="html" omit-xml-declaration="no" version="1.0" media-type="text/xml" />
+	
+	<!-- ОтобразитьФормуКонтактыNEW -->
+	
+	<xsl:template match="/">
+		<xsl:apply-templates select="form" />
+	</xsl:template>
+	
+	<xsl:template match="form">
+		<div id="formBox{@id}">
+			
+			<script type="text/javascript">
+				$(function() {
+				/*$('#form<xsl:value-of select="@id" /> .btn-primary').on('click',function(a) {
+				dataLayer.push({'event': 'form<xsl:value-of select="@id" />.sendMS'});
+				});*/
+				$('#form<xsl:value-of select="@id" />').validate({
+				focusInvalid: true,
+				errorClass: "input_error",
+				submitHandler: function(form) {
+				var d = $(form).serialize();
+				$.sendForm('/callback/',$('#formBox<xsl:value-of select="@id" />'), <xsl:value-of select="@id" />, 306, d);
+				/*yaCounter20420221.reachGoal('SEND_FORM_<xsl:value-of select="@id" />');*/
+				/*dataLayer.push({'event': 'form<xsl:value-of select="@id" />.successMS'});*/
+				}
+				});
+				});
+			</script>
+			<div class="h3"><xsl:value-of disable-output-escaping="yes" select="name" /></div>
+			<xsl:choose>
+				<xsl:when test="success/node() and success = 1">
+					<div><xsl:value-of disable-output-escaping="yes" select="substring-after(description, '&lt;!-- pagebreak --&gt;')" /></div>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:choose>
+						<!-- Выводим ошибку (error), если она была передана через внешний параметр -->
+						<xsl:when test="error != ''">
+							<div id="error">
+								<xsl:value-of disable-output-escaping="yes" select="error" />
+							</div>
+						</xsl:when>
+						<xsl:when test="errorId/node()">
+							<div id="error">
+								<xsl:choose>
+									<xsl:when test="errorId = 0">
+										Вы неверно ввели число подтверждения отправки формы!
+									</xsl:when>
+									<xsl:when test="errorId = 1">
+										Заполните все обязательные поля!
+									</xsl:when>
+									<xsl:when test="errorId = 2">
+										Прошло слишком мало времени с момента последней отправки Вами формы!
+									</xsl:when>
+								</xsl:choose>
+							</div>
+						</xsl:when>
+						<xsl:otherwise>
+							<div><xsl:value-of disable-output-escaping="yes" select="substring-before(description, '&lt;!-- pagebreak --&gt;')" /></div>
+						</xsl:otherwise>
+					</xsl:choose>
+					
+					<form name="form{@id}" id="form{@id}" class="validate" method="post" enctype="multipart/form-data">
+						
+						<xsl:apply-templates select="form_field" />
+						
+						<div class="form-group row">
+							<div class="col-sm-10">
+								<button name="{button_name}" value="{button_value}" type="submit" class="btn btn-primary"><xsl:value-of disable-output-escaping="yes" select="button_value" /></button>
+							</div>
+						</div>
+						<div class="form-group">
+						<small class="form-text text-muted">Нажимая кнопку "<xsl:value-of select="button_value" />", я подтверждаю, что даю свое согласие на обработку предоставленных мной данных в соответствии с <a href="/personalnie-dannie/">Политикой обработки персональных данных</a></small>
+						</div>
+					</form>
+				</xsl:otherwise>
+			</xsl:choose>
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="form_field">
+		<!-- Не скрытое поле и не надпись -->
+		<xsl:if test="type != 7 and type != 8">
+			<div class="form-group row">
+				<label for="" class="col-sm-2 col-form-label">
+					<xsl:value-of select="caption" />
+					<xsl:if test="obligatory = 1">
+						<sup>
+							<font color="red">*</font>
+						</sup>
+					</xsl:if>
+				</label>
+				<div class="col-sm-10">
+					<!-- Текстовые поля -->
+					<xsl:if test="type = 0 or type = 1 or type = 2">
+						<input type="text" name="{name}" value="{value}" size="{size}" class="form-control">
+							<xsl:choose>
+								<!-- Поле для ввода пароля -->
+								<xsl:when test="type = 1">
+									<xsl:attribute name="type">password</xsl:attribute>
+								</xsl:when>
+								<!-- Поле загрузки файла -->
+								<xsl:when test="type = 2">
+									<xsl:attribute name="type">file</xsl:attribute>
+								</xsl:when>
+								<!-- Текстовое поле -->
+								<xsl:otherwise>
+									<xsl:attribute name="type">text</xsl:attribute>
+								</xsl:otherwise>
+							</xsl:choose>
+							<xsl:if test="obligatory = 1">
+								<xsl:attribute name="class">form-control required</xsl:attribute>
+								<xsl:attribute name="minlength">1</xsl:attribute>
+								<xsl:attribute name="title">Заполните поле <xsl:value-of select="caption" /></xsl:attribute>
+							</xsl:if>
+						</input>
+					</xsl:if>
+					
+					<!-- Радиокнопки -->
+					<xsl:if test="type = 3 or type = 9">
+						<xsl:apply-templates select="list/list_item" />
+						<label class="input_error" for="{name}" style="display: none">Выберите, пожалуйста, значение.</label>
+					</xsl:if>
+					
+					<!-- Checkbox -->
+					<xsl:if test="type = 4">
+						<div class="form-check">
+							<input type="checkbox" name="{name}" class="form-check-input">
+								<xsl:if test="checked = 1 or value = 1">
+									<xsl:attribute name="checked">checked</xsl:attribute>
+								</xsl:if>
+							</input>
+						</div>
+					</xsl:if>
+					
+					<!-- Textarea -->
+					<xsl:if test="type = 5">
+						<textarea name="{name}" cols="{cols}" rows="{rows}" wrap="off" class="form-control">
+							<xsl:if test="obligatory = 1">
+								<xsl:attribute name="class">form-control required</xsl:attribute>
+								<xsl:attribute name="minlength">1</xsl:attribute>
+								<xsl:attribute name="title">Заполните поле <xsl:value-of select="caption" /></xsl:attribute>
+							</xsl:if>
+							<xsl:value-of disable-output-escaping="yes" select="value" />
+						</textarea>
+					</xsl:if>
+					
+					<!-- Список -->
+					<xsl:if test="type = 6">
+						<select name="{name}" class="form-control">
+							<xsl:if test="obligatory = 1">
+								<xsl:attribute name="class">form-control required</xsl:attribute>
+								<xsl:attribute name="title">Заполните поле <xsl:value-of select="caption" /></xsl:attribute>
+							</xsl:if>
+							<option value="">...</option>
+							<xsl:apply-templates select="list/list_item" />
+						</select>
+					</xsl:if>
+				</div>
+			</div>
+		</xsl:if>
+		
+		<!-- скрытое поле -->
+		<xsl:if test="type = 7">
+			<input type="hidden" name="{name}" value="{value}" />
+		</xsl:if>
+		
+		<!-- Надпись -->
+		<xsl:if test="type = 8">
+			<div class="form-group">
+				<strong><xsl:value-of select="caption" /></strong>
+			</div>
+		</xsl:if>
+	</xsl:template>
+	
+	<!-- Формируем радиогруппу или выпадающий список -->
+	<xsl:template match="list/list_item">
+		<xsl:choose>
+			<xsl:when test="../../type = 3">
+				<input id="{../../name}_{@id}" type="radio" name="{../../name}" value="{value}">
+					<xsl:if test="value = ../../value">
+						<xsl:attribute name="checked">checked</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="../../obligatory = 1">
+						<xsl:attribute name="class">required</xsl:attribute>
+						<xsl:attribute name="minlength">1</xsl:attribute>
+						<xsl:attribute name="title">Заполните поле <xsl:value-of select="caption" /></xsl:attribute>
+					</xsl:if>
+			</input><xsl:text> </xsl:text>
+				<label for="{../../name}_{@id}"><xsl:value-of disable-output-escaping="yes" select="value" /></label>
+				<br/>
+			</xsl:when>
+			<xsl:when test="../../type = 6">
+				<option value="{value}">
+					<xsl:if test="value = ../../value">
+						<xsl:attribute name="selected">selected</xsl:attribute>
+					</xsl:if>
+					<xsl:value-of disable-output-escaping="yes" select="value" />
+				</option>
+			</xsl:when>
+			<xsl:when test="../../type = 9">
+				<xsl:variable name="currentValue" select="@id" />
+				<input id="{../../name}_{@id}" type="checkbox" name="{../../name}_{@id}" value="{value}">
+					<xsl:if test="../../values[value=$currentValue]/node()">
+						<xsl:attribute name="checked">checked</xsl:attribute>
+					</xsl:if>
+					<xsl:if test="../../obligatory = 1">
+						<xsl:attribute name="class">required</xsl:attribute>
+						<xsl:attribute name="minlength">1</xsl:attribute>
+						<xsl:attribute name="title">Заполните поле <xsl:value-of select="caption" /></xsl:attribute>
+					</xsl:if>
+			</input><xsl:text> </xsl:text>
+				<label for="{../../name}_{@id}"><xsl:value-of disable-output-escaping="yes" select="value" /></label>
+				<br/>
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>
+	
+</xsl:stylesheet>

@@ -1,0 +1,26 @@
+<?php
+
+return array(
+	'menu' => 'Bitrix24 export',
+	'title' => 'Bitrix24 export',
+	'exchange' => 'Exchange with Bitrix24:',
+	'siteuser' => 'Clients',
+	'form' => 'Forms',
+	'shop' => 'Shop orders',
+	'export_shop_order' => 'Export order in Bitrix24',
+	'save' => 'Save',
+	'settings' => 'Settings',
+	'http' => 'Bitrix24 host (xxx.bitrix24.ru)',
+	'secret' => 'Secret key',
+	'bitrix_user' => 'Bitrix user ID',
+	'not_access' => 'There are no active modules for exchanging with Bitrix24',
+	'shop_order' => 'Order №%s',
+	'form_title' => 'CRM form "%s"',
+	'new_order' => 'Stage "New"',
+	'paid_order' => 'Stage "Paid"',
+	'canceled_order' => 'Stage "Canceled"',
+	'tax' => 'Tax %s%%',
+	'shop_order_description' => 'Order description: %s',
+	'shop_delivery' => 'Delivery: %s',
+	'order_paymentsystem' => 'Payment system: %s',
+);

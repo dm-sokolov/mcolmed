@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<template>
+	<fields>
+		<field type="0">
+			<name>Название организации</name>
+			<value>Интернет-магазин</value>
+			<macros>company_name</macros>
+		</field>			
+		<field type="0">
+			<name>Адрес</name>
+			<value>ул. Пушкина, д. 123, оф. 456 г. Москва, 101000</value>
+			<macros>company_address</macros>
+		</field>	
+		<field type="0">
+			<name>Телефон</name>
+			<value>+7(495) 321-456-7</value>
+			<macros>company_phone</macros>
+		</field>
+		<field type="0">
+			<name>Факс</name>
+			<value>+7(495) 321-456-8</value>
+			<macros>company_fax</macros>
+		</field>				
+		<field type="0">
+			<name>Электронная почта</name>
+			<value>admin@localhost.ru</value>
+			<macros>company_email</macros>
+		</field>		
+	</fields>
+</template>
